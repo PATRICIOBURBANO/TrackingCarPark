@@ -44,10 +44,22 @@ public class VehicleTracker
     // METHODS
     public void GenerateSlots()
     {
-        for (int i = 1; i <= this.Capacity; i++)
+        try
         {
-            this.VehicleList.Add(i, null);
+            if (Capacity > 0)
+            {
+                for (int i = 1; i <= this.Capacity; i++)
+                {
+                    this.VehicleList.Add(i, null);
+                }
+
+            }
         }
+        catch (Exception e)
+        {
+            throw new Exception("Capacity needs to be greater than zero");
+        }
+
     }
 
     public void AddVehicle(Vehicle vehicle)
@@ -92,14 +104,26 @@ public class VehicleTracker
     public List<Vehicle> ParkedPassholders()
     {
         List<Vehicle> passHolders = new List<Vehicle>();
-        passHolders.Add(this.VehicleList.FirstOrDefault(v => v.Value.Pass).Value);
+        foreach( Vehicle vehicle in VehicleList.Values)
+        {
+            if(!vehicle.Pass)
+            {
+                throw new Exception("vehicle has not passed");
+            }
+            else
+            {
+                passHolders.Add(vehicle);
+            }
+
+        }
+       
         return passHolders;
     }
 
     public int PassholderPercentage()
     {
         int passHolders = ParkedPassholders().Count();
-        int percentage = (passHolders / this.Capacity) * 100;
+        int percentage = passHolders / (Capacity - SlotsAvailable) * 100;
         return percentage;
     }
 }
